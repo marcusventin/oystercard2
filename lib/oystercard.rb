@@ -4,6 +4,7 @@ class Oystercard
   MAXIMUM_VALUE = 90
   def initialize
     @balance = 0
+    @journey_status = false
   end
 
   def top_up(value)
@@ -13,5 +14,17 @@ class Oystercard
 
   def deduct(fare)
     @balance -= fare
+  end
+
+  def touch_in
+    @journey_status = true
+  end
+
+  def touch_out
+    @journey_status = false
+  end
+
+  def in_journey?
+   @journey_status
   end
 end
