@@ -2,7 +2,7 @@
 
 source "https://rubygems.org"
 
-git_source(:github) {|oystercard| "https://github.com/marcusventin/oystercard" }
+git_source(:github) { |oystercard| "https://github.com/marcusventin/oystercard" }
 
 ruby '3.0.0'
 
