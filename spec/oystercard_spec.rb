@@ -2,11 +2,16 @@ require "oystercard"
 
 describe Oystercard do
   maximum_balance = Oystercard::MAXIMUM_BALANCE
-  let(:station){ double :station }
+  let(:entry_station){ double :station }
+  let(:exit_station){ double :station }
 
   describe "#initialize" do
     it "has a default balance of 0" do
       expect(subject.balance).to eq 0
+    end
+
+    it "creates an empty journey history array" do
+      expect(subject.journey_history).to be_empty
     end
   end
   
@@ -29,28 +34,36 @@ describe Oystercard do
 
       it "changes journey status to true" do
         subject.top_up(maximum_balance)
-        subject.touch_in(station)
+        subject.touch_in(entry_station)
         expect(subject).to be_in_journey
       end
 
     it "raises error if balance is insufficient" do
-      expect{ subject.touch_in(station) }.to raise_error "Insufficient balance"
+      expect{ subject.touch_in(entry_station) }.to raise_error "Insufficient balance"
     end
 
   end
 
   describe "#touch_out" do
     before { subject.top_up(maximum_balance) 
-    subject.touch_in(station)}
+    subject.touch_in(entry_station)}
+    let(:journey){ { entry_station: entry_station, exit_station: exit_station} }
 
       it "changes journey status to false" do
-        subject.touch_out
+        subject.touch_out(exit_station)
         expect(subject).not_to be_in_journey
       end
 
       it "deducts balance by minimum fare" do
-        expect{ subject.touch_out}.to change { subject.balance }.by (-Oystercard::MINIMUM_FARE)
+        expect{ subject.touch_out(exit_station)}.to change { subject.balance }.by (-Oystercard::MINIMUM_FARE)
       end
+
+    it "creates a journey from touching in/out" do
+      subject.touch_in(entry_station)
+      subject.touch_out(exit_station)
+      expect(subject.journey_history).to include journey
+    end
+
   end
 
   describe "#in_journey?" do
@@ -58,7 +71,7 @@ describe Oystercard do
 
     it "returns true when touched in" do
       subject.top_up(maximum_balance)
-      subject.touch_in(station)
+      subject.touch_in(entry_station)
       expect(subject.in_journey?).to eq true
     end
 
@@ -66,6 +79,7 @@ describe Oystercard do
       expect(subject.in_journey?).to eq false
     end
   end
-    # it {expect(subject).to respond_to(:balance) }
+
+  
   
 end
