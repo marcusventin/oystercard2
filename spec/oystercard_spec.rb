@@ -2,6 +2,7 @@ require "oystercard"
 
 describe Oystercard do
   maximum_balance = Oystercard::MAXIMUM_BALANCE
+  let(:station){ double :station }
 
   describe "#initialize" do
     it "has a default balance of 0" do
@@ -24,23 +25,23 @@ describe Oystercard do
   end
 
   describe "#touch_in" do
-      it { is_expected.to respond_to(:touch_in) }
+      it { is_expected.to respond_to(:touch_in).with(1).argument }
 
       it "changes journey status to true" do
         subject.top_up(maximum_balance)
-        subject.touch_in
+        subject.touch_in(station)
         expect(subject).to be_in_journey
       end
 
     it "raises error if balance is insufficient" do
-      expect{ subject.touch_in }.to raise_error "Insufficient balance"
+      expect{ subject.touch_in(station) }.to raise_error "Insufficient balance"
     end
 
   end
 
   describe "#touch_out" do
     before { subject.top_up(maximum_balance) 
-    subject.touch_in}
+    subject.touch_in(station)}
 
       it "changes journey status to false" do
         subject.touch_out
@@ -57,7 +58,7 @@ describe Oystercard do
 
     it "returns true when touched in" do
       subject.top_up(maximum_balance)
-      subject.touch_in
+      subject.touch_in(station)
       expect(subject.in_journey?).to eq true
     end
 
