@@ -49,11 +49,17 @@ describe Journey do
 
 
   describe "#fare" do
+    
     it "returns minimum fare when journey is complete" do
       subject.end_journey(exit_station: "test_exit")
       expect(subject.fare).to eq 1
     end
-
+    
+   
+    # it "returns a fare of £1 when moving around the same zone" do
+       
+    #   expect(subject.fare).to eq 1
+    # end
   end
 
 end
