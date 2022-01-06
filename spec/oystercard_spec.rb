@@ -17,13 +17,12 @@ describe Oystercard do
   
   describe "#top_up" do
     it { is_expected.to respond_to(:top_up).with(1).argument }
-  
+
     it "adds a value to the balance" do
       expect{ subject.top_up 10}.to change{ subject.balance }.by 10
     end
 
     it "raises error if balance exceeds maximum value" do
-
       subject.top_up(maximum_balance)
       expect{ subject.top_up(1) }.to raise_error("Maximum balance of #{maximum_balance} exceeded")
     end
@@ -34,8 +33,7 @@ describe Oystercard do
 
       it "changes journey status to true" do
         subject.top_up(maximum_balance)
-        subject.touch_in(entry_station)
-        expect(subject).to be_in_journey
+        expect { subject.touch_in(entry_station) }.to change { subject.in_journey? }.from(false).to(true)
       end
 
     it "raises error if balance is insufficient" do
@@ -46,16 +44,15 @@ describe Oystercard do
 
   describe "#touch_out" do
     before { subject.top_up(maximum_balance) 
-    subject.touch_in(entry_station)}
-    let(:journey){ { entry_station: entry_station, exit_station: exit_station} }
+    subject.touch_in(entry_station) }
+    let (:journey){ {entry_station: entry_station, exit_station: exit_station} }
 
       it "changes journey status to false" do
-        subject.touch_out(exit_station)
-        expect(subject).not_to be_in_journey
+        expect { subject.touch_out(exit_station) }.to change { subject.in_journey? }.from(true).to(false)
       end
 
       it "deducts balance by minimum fare" do
-        expect{ subject.touch_out(exit_station)}.to change { subject.balance }.by (-Oystercard::MINIMUM_FARE)
+        expect{ subject.touch_out(exit_station) }.to change { subject.balance }.by (-Oystercard::MINIMUM_FARE)
       end
 
     it "creates a journey from touching in/out" do
@@ -71,8 +68,7 @@ describe Oystercard do
 
     it "returns true when touched in" do
       subject.top_up(maximum_balance)
-      subject.touch_in(entry_station)
-      expect(subject.in_journey?).to eq true
+      expect { subject.touch_in(entry_station) }.to change { subject.in_journey? }.from(false).to(true)
     end
 
     it "returns false when not in journey" do
