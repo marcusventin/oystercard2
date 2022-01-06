@@ -2,8 +2,8 @@ require "oystercard"
 
 describe Oystercard do
   maximum_balance = Oystercard::MAXIMUM_BALANCE
-  let(:entry_station){ double :station }
-  let(:exit_station){ double :station }
+  let (:entry_station){ double :station }
+  let (:exit_station){ double :station }
 
   describe "#initialize" do
     it "has a default balance of 0" do
@@ -47,13 +47,13 @@ describe Oystercard do
     subject.touch_in(entry_station) }
     let (:journey){ {entry_station: entry_station, exit_station: exit_station} }
 
-      it "changes journey status to false" do
-        expect { subject.touch_out(exit_station) }.to change { subject.in_journey? }.from(true).to(false)
-      end
+    it "changes journey status to false" do
+      expect { subject.touch_out(exit_station) }.to change { subject.in_journey? }.from(true).to(false)
+    end
 
-      it "deducts balance by minimum fare" do
-        expect{ subject.touch_out(exit_station) }.to change { subject.balance }.by (-Oystercard::MINIMUM_FARE)
-      end
+    it "deducts balance by minimum fare" do
+      expect{ subject.touch_out(exit_station) }.to change { subject.balance }.by (-Oystercard::MINIMUM_FARE)
+    end
 
     it "creates a journey from touching in/out" do
       subject.touch_in(entry_station)
