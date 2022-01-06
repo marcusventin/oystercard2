@@ -10,9 +10,9 @@ describe Oystercard do
       expect(subject.balance).to eq 0
     end
 
-    it "creates an empty journey history array" do
-      expect(subject.journey_history).to be_empty
-    end
+    # it "creates an empty journey history array" do
+    #   expect(subject.journey_history).to be_empty
+    # end
   end
   
   describe "#top_up" do
@@ -33,7 +33,8 @@ describe Oystercard do
 
       it "changes journey status to true" do
         subject.top_up(maximum_balance)
-        expect { subject.touch_in(entry_station) }.to change { subject.in_journey? }.from(false).to(true)
+        subject.touch_in(entry_station)
+        expect{subject.to be_in_journey}
       end
 
     it "raises error if balance is insufficient" do
@@ -47,8 +48,8 @@ describe Oystercard do
     subject.touch_in(entry_station) }
     let (:journey){ {entry_station: entry_station, exit_station: exit_station} }
 
-    it "changes journey status to false" do
-      expect { subject.touch_out(exit_station) }.to change { subject.in_journey? }.from(true).to(false)
+    it "changes journey status to nil" do
+      expect { subject.touch_out(exit_station) }.to change { subject.in_journey? }.from("in journey").to(nil)
     end
 
     it "deducts balance by minimum fare" do
@@ -60,22 +61,6 @@ describe Oystercard do
       subject.touch_out(exit_station)
       expect(subject.journey_history).to include journey
     end
-
   end
 
-  describe "#in_journey?" do
-    it { is_expected.to respond_to(:in_journey?) }
-
-    it "returns true when touched in" do
-      subject.top_up(maximum_balance)
-      expect { subject.touch_in(entry_station) }.to change { subject.in_journey? }.from(false).to(true)
-    end
-
-    it "returns false when not in journey" do
-      expect(subject.in_journey?).to eq false
-    end
-  end
-
-  
-  
 end
